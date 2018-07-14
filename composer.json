@@ -1,6 +1,6 @@
 {
     "require": {
-        "rotexsoft/versatile-collections": "dev-master",
-        "league/climate": "^3.4"
+        "league/climate": "^3.4",
+        "rotexsoft/versatile-collections": "^2.0"
     }
 }
