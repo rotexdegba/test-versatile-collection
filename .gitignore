@@ -23,6 +23,18 @@ vendor/
 /vendor/*.*
 /vendor/*/
 
+phpdocs/
+/phpdocs/
+/phpdocs/*
+/phpdocs/*.*
+/phpdocs/*/
+
+apigen-docs/
+/apigen-docs/
+/apigen-docs/*
+/apigen-docs/*.*
+/apigen-docs/*/
+
 composer.lock
 phpunit.xml
 

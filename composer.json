@@ -1,6 +1,10 @@
 {
+    "minimum-stability": "dev",
     "require": {
         "league/climate": "^3.4",
-        "rotexsoft/versatile-collections": "^2.0"
+        "rotexsoft/versatile-collections": "dev-master"
+    },
+    "require-dev": {
+        "apigen/apigen": "dev-master"
     }
 }

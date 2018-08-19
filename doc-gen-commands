@@ -1,0 +1,3 @@
+/c/PHP71/php ./vendor/apigen/apigen/bin/apigen generate ./vendor/rotexsoft/versatile-collections/src --destination=./apigen-docs
+
+/c/PHP71/php ./phpDocumentor.phar run -d ./vendor/rotexsoft/versatile-collections/src/ -t ./phpdocs
