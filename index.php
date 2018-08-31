@@ -226,47 +226,80 @@ require_once './vendor/autoload.php';
 //    )    
 //);exit;
 
-    $collection = new \VersatileCollections\GenericCollection();
-    $collection->item1 = ['name'=>'Joe', 'age'=>'10',];
-    $collection->item2 = ['name'=>'Jane', 'age'=>'20',];
-    $collection->item3 = ['name'=>'Janice', 'age'=>'30',];
+//echo var_export($collection->toArray(), true);
+//echo VersatileCollections\var_to_string($collection->toArray());
 
-    // $collection initially contains:
+    $data = [];
+    $data['item1'] = ['name'=>'Joe', 'age'=>'10',];
+    $data['item2'] = ['name'=>'Jane', 'age'=>'20',];
+    $data['item3'] = ['name'=>'Janice', 'age'=>'30',];
+
+    $collection = \VersatileCollections\GenericCollection::makeNew($data);
+    echo VersatileCollections\var_to_string($collection->toArray()).PHP_EOL.PHP_EOL;
+    // Keys preserved and $collection contains:
     //  [
     //      'item1' => [ 'name'=>'Joe', 'age'=>'10' ],
     //      'item2' => [ 'name'=>'Jane', 'age' => '20' ],
     //      'item3' => [ 'name' => 'Janice', 'age' => '30' ]
     //  ]
-
-    // no args
-    $collection->makeAllKeysNumeric();
-    // $collection now contains:
+    
+    $collection = \VersatileCollections\GenericCollection::makeNew($data, false);
+    echo VersatileCollections\var_to_string($collection->toArray()).PHP_EOL.PHP_EOL;
+    // Keys not preserved and $collection contains:
     //  [
     //      0 => [ 'name'=>'Joe', 'age'=>'10' ],
     //      1 => [ 'name'=>'Jane', 'age' => '20' ],
     //      2 => [ 'name' => 'Janice', 'age' => '30' ]
     //  ]
-    
-    // reset collection to initial state
-    $collection = new \VersatileCollections\GenericCollection();
-    $collection->item1 = ['name'=>'Joe', 'age'=>'10',];
-    $collection->item2 = ['name'=>'Jane', 'age'=>'20',];
-    $collection->item3 = ['name'=>'Janice', 'age'=>'30',];
-    
-    // with starting key value of 777
-    $collection->makeAllKeysNumeric(777);
-    // $collection now contains:
-    //  [
-    //      777 => [ 'name'=>'Joe', 'age'=>'10' ],
-    //      778 => [ 'name'=>'Jane', 'age' => '20' ],
-    //      779 => [ 'name' => 'Janice', 'age' => '30' ]
-    //  ]
-    
-    echo var_export($collection->toArray(), true).PHP_EOL.PHP_EOL.PHP_EOL;
-    echo var_export($collection->makeAllKeysNumeric(777)->toArray(), true);
 
+
+
+function extractNamesFromMethodsCollection(\VersatileCollections\CollectionInterface $collection) {
     
+    $string_collection = \VersatileCollections\StringsCollection::makeNew();
 
-//echo var_export($collection->toArray(), true);
-//echo VersatileCollections\var_to_string($collection->toArray());
+    foreach ($collection as $item) {
 
+        $new_item = $item->getName();
+        $new_item .= $item->isPrivate()? " [private]" : '';
+        $new_item .= $item->isProtected()? " [protected]" : '';
+        $new_item .= $item->isPublic()? " [public]" : '';
+        $new_item .= $item->isStatic()? " [static]" : '';
+        
+        $string_collection[] = $new_item;
+    }
+
+    return $string_collection;
+}
+
+$class = new \ReflectionClass(\VersatileCollections\CollectionInterface::class);
+$methods = $class->getMethods();
+$methods_collection = \VersatileCollections\ObjectsCollection::makeNew($methods);
+
+$interface_method_names_collection = $methods_collection->pipeAndReturnCallbackResult(
+    function(\VersatileCollections\CollectionInterface $collection) {
+
+        return extractNamesFromMethodsCollection($collection);
+    }
+)->sortMe();
+
+$class = new \ReflectionClass(\VersatileCollections\CollectionInterfaceImplementationTrait::class);
+$trait_methods = $class->getMethods();
+$trait_methods_collection = \VersatileCollections\ObjectsCollection::makeNew($trait_methods);
+
+$trait_methods_collection->pipeAndReturnCallbackResult(
+    function(\VersatileCollections\CollectionInterface $collection) {
+
+        return extractNamesFromMethodsCollection($collection);
+    }
+)
+->sortMe()
+->each(
+    function($key, $item) use ($interface_method_names_collection) {
+        
+        if( !$interface_method_names_collection->containsItem($item) ) {
+            
+            echo $item.PHP_EOL;
+        }
+    }
+);
