@@ -229,28 +229,6 @@ require_once './vendor/autoload.php';
 //echo var_export($collection->toArray(), true);
 //echo VersatileCollections\var_to_string($collection->toArray());
 
-    $data = [];
-    $data['item1'] = ['name'=>'Joe', 'age'=>'10',];
-    $data['item2'] = ['name'=>'Jane', 'age'=>'20',];
-    $data['item3'] = ['name'=>'Janice', 'age'=>'30',];
-
-    $collection = \VersatileCollections\GenericCollection::makeNew($data);
-    echo VersatileCollections\var_to_string($collection->toArray()).PHP_EOL.PHP_EOL;
-    // Keys preserved and $collection contains:
-    //  [
-    //      'item1' => [ 'name'=>'Joe', 'age'=>'10' ],
-    //      'item2' => [ 'name'=>'Jane', 'age' => '20' ],
-    //      'item3' => [ 'name' => 'Janice', 'age' => '30' ]
-    //  ]
-    
-    $collection = \VersatileCollections\GenericCollection::makeNew($data, false);
-    echo VersatileCollections\var_to_string($collection->toArray()).PHP_EOL.PHP_EOL;
-    // Keys not preserved and $collection contains:
-    //  [
-    //      0 => [ 'name'=>'Joe', 'age'=>'10' ],
-    //      1 => [ 'name'=>'Jane', 'age' => '20' ],
-    //      2 => [ 'name' => 'Janice', 'age' => '30' ]
-    //  ]
 
 
 
@@ -284,7 +262,7 @@ $interface_method_names_collection = $methods_collection->pipeAndReturnCallbackR
 )->sortMe();
 
 $class = new \ReflectionClass(\VersatileCollections\CollectionInterfaceImplementationTrait::class);
-$trait_methods = $class->getMethods();
+$trait_methods = $class->getMethods(ReflectionMethod::IS_PUBLIC);
 $trait_methods_collection = \VersatileCollections\ObjectsCollection::makeNew($trait_methods);
 
 $trait_methods_collection->pipeAndReturnCallbackResult(
@@ -303,3 +281,5 @@ $trait_methods_collection->pipeAndReturnCallbackResult(
         }
     }
 );
+
+VersatileCollections\dump_var($interface_method_names_collection->count());
