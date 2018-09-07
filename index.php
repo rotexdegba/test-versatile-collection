@@ -1,6 +1,7 @@
 <?php
 require_once './vendor/autoload.php';
 
+use function \VersatileCollections\dump_var;
 //class PdoCollection implements \VersatileCollections\StrictlyTypedCollectionInterface {
 //    
 //    use \VersatileCollections\StrictlyTypedCollectionInterfaceImplementationTrait;
@@ -230,19 +231,17 @@ require_once './vendor/autoload.php';
 //echo VersatileCollections\var_to_string($collection->toArray());
 
 
-
-
-function extractNamesFromMethodsCollection(\VersatileCollections\CollectionInterface $collection) {
+function extractNamesFromMethodsCollection(\VersatileCollections\CollectionInterface $collection, $hide_meta_data=false) {
     
     $string_collection = \VersatileCollections\StringsCollection::makeNew();
 
     foreach ($collection as $item) {
 
         $new_item = $item->getName();
-        $new_item .= $item->isPrivate()? " [private]" : '';
-        $new_item .= $item->isProtected()? " [protected]" : '';
-        $new_item .= $item->isPublic()? " [public]" : '';
-        $new_item .= $item->isStatic()? " [static]" : '';
+        $new_item .= $item->isPrivate() && !$hide_meta_data ? " [private]" : '';
+        $new_item .= $item->isProtected() && !$hide_meta_data ? " [protected]" : '';
+        $new_item .= $item->isPublic() && !$hide_meta_data ? " [public]" : '';
+        $new_item .= $item->isStatic() && !$hide_meta_data ? " [static]" : '';
         
         $string_collection[] = $new_item;
     }
@@ -257,7 +256,7 @@ $methods_collection = \VersatileCollections\ObjectsCollection::makeNew($methods)
 $interface_method_names_collection = $methods_collection->pipeAndReturnCallbackResult(
     function(\VersatileCollections\CollectionInterface $collection) {
 
-        return extractNamesFromMethodsCollection($collection);
+        return extractNamesFromMethodsCollection($collection, true);
     }
 )->sortMe();
 
@@ -277,9 +276,12 @@ $trait_methods_collection->pipeAndReturnCallbackResult(
         
         if( !$interface_method_names_collection->containsItem($item) ) {
             
-            echo $item.PHP_EOL;
+            //echo $item.PHP_EOL;
         }
     }
 );
 
 VersatileCollections\dump_var($interface_method_names_collection->count());
+VersatileCollections\dump_var(implode(PHP_EOL, $interface_method_names_collection->toArray()));
+//VersatileCollections\dump_var($trait_methods_collection->count());
+
