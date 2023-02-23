@@ -7,6 +7,6 @@
         "tightenco/collect": "^6.5"
     },
     "require-dev": {
-        "apigen/apigen": "dev-master"
+        
     }
 }
