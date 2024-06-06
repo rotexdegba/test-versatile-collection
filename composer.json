@@ -4,7 +4,7 @@
     "require": {
         "league/climate": "^3.4",
         "rotexsoft/versatile-collections": "dev-master",
-        "tightenco/collect": "^6.5"
+        "tightenco/collect": "^9.52.7"
     },
     "require-dev": {
         
